@@ -1,0 +1,101 @@
+---
+title: "Environmental Justice Index Exploration - West Texas"
+author: "Grace Beasley"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+
+pacman::p_load(here, 
+               gtsummary,
+               ggplot2,
+               dplyr)
+
+knitr::opts_chunk$set(
+  echo = F, warning = F, message = F
+  )
+
+```
+
+
+# Introduction
+
+The Environmental Justice Index pulls information from the U.S. Census Bureau, EPA, CDC, and Mine Safety and Health Administration to create measures of factors associated with environmental health and ranks census tracts on cumulative environmental health justice measures. The cumulative rankings take into account social vulnerabilities, environmental burden, and health vulnerabilities. Social vulnerabilities include elements socioeconomic status, racial/ethnic minority status, household characteristics, and housing type. Environmental burden, which we will be focusing on in this report, include measures of air pollution, potentially hazardous and toxic sites, built environment, and water pollution. The health vulnerabilities focus primarily on pre-existing chronic burden of disease.
+
+In our analysis, we will be focusing specifically on the association between annual mean days above ozone regulatory standard and cumulative health scores within census tracts as well as the aggregated average of health scores at the county level.
+
+Because of the massive scope of this dataset, we have subset the geographic location to include only the census tracts that make up the counties of West Texas.
+
+Variables of interest in our analysis are as follows:
+
+Outcome: 
+  **F_HVM**: this variable is the sum of 5 binary health outcomes variables that designate a census tract as flagged (var = 1) if the tract is ranked above 0.6666 percentile in risk with the following: high blood pressure, asthma, cancer, mental health, and diabetes. 
+
+Exposure:
+**E_OZONE**: this variable is the annual average days above ozone regulatory standards.
+
+## Objectives
+
+1. To explore the association between ozone days above the regulatory standard and a census tract's percentile flagging designation
+2. To visualize the aggregated mean health risk scores at the county level
+
+
+```{r, load-data}
+here::i_am("EJI_report_gnb.Rmd")
+data <- readRDS(
+  file = here::here("derived_data/data_west.rds")
+)
+```
+
+
+# Analysis
+
+For the purpose of analyzing our data, we fit a regression model as shown below. We included annual average days above PM2.5 regulatory standards, ambient concentration of diesel PM/m3, proportion of tract's area within a 1 mile buffer of high volume roads, and proportion of tract's area within a 1 mile buffer of an airport as potential confounders.
+
+## Table 1
+
+```{r regression}
+
+mod <- glm(
+  F_HVM ~ E_OZONE + E_PM + E_DSLPM + E_ROAD + E_AIRPRT,
+  data = data.west
+)
+
+tbl_regression(mod) |>
+  add_global_p()
+
+```
+Table 1: Regression model results, including variables of interest, parameter estimates, 95% confidence intervals, and p-values.
+
+Based on the results of this model, we find that there is not a statistically significant association between health scores and annual average days O3 above regulatory standards when annual average days above PM2.5 regulatory standards, ambient concentration of diesel PM/m3, proportion of tract's area within a 1 mile buffer of high volume roads, and proportion of tract's area within a 1 mile buffer of an airport are controlled for. There does however seem to be a statistically significant relationship between health scores and ambient concentration of diesel when controlling for the other variables included in our model.
+
+## Figure 1
+
+
+```{r figure}
+asthma.county <- data_west %>%
+  group_by(COUNTY) %>%
+  mutate(count.asthma = mean(F_HVM))
+
+asthma.county <- asthma.county[!duplicated(asthma.county$COUNTY), ]
+  
+  
+figure1<- ggplot(data=asthma.county, aes(x=COUNTY, y=count.asthma)) +
+  geom_bar(stat="identity") +
+  labs(title = "Average Health Score by County", y = "Average Health Score")
+figure1 + theme_bw() + theme(axis.text.x = element_text(angle = 80, vjust = 0.5))
+
+```
+
+Figure 1: Average Health scores by county
+
+Health scores were averaged across census tracts within each county and were then plotted above. It is important to note that higher average scores indicate a greater number census tracts within counties that are flagged for high percentile risk of chronic diseases.
+
+# Additional notes on the draft
+
+I am confident in neither the analyses nor subsequent interpretations of results in this draft. I utilized this assignment and time more to begin to familiarize myself with the dataset and will be editing analyses in future iterations.
