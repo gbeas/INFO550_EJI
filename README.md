@@ -16,7 +16,7 @@ Results of this descriptive analysis presented in the report include Table 1 sum
 
 ## Generating the report
 
-To generate the final report, set working directory to `EJI_project` directory. Run `Make report.html` in the terminal, and the html file, titled `EJI_report_gnb` should appear in the project directory.
+To generate the final report, set working directory to `EJI_project` directory. Run `Make report.html` or simply `make` in the terminal, and the html file, titled `EJI_report_gnb`, should appear in the project directory.
 
 ------------------------------------------------------------------------
 
@@ -27,6 +27,7 @@ To generate the final report, set working directory to `EJI_project` directory. 
   - read in raw data from `raw_data/` folder
   - subset West Texas counties and variables of interest
   - aggregate to county level
+  - merge aggregate data with U.S. Census spatial data
   - save West Texas data as `data_west.rds` in `derived_data/` folder
   - save county aggregate data with spatial data as `county_avg_geo.rds` in `derived_data/` folder
 
@@ -49,7 +50,7 @@ To generate the final report, set working directory to `EJI_project` directory. 
 `EJI_report_gnb.Rmd`
 
   - read in `table.rds`
-  - import maps into report
+  - import maps
   - includes interpretation of results
 
 
