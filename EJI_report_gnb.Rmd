@@ -63,7 +63,7 @@ For the purpose of analyzing our data, we fit a regression model as shown below.
 
 mod <- glm(
   F_HVM ~ E_OZONE + E_PM + E_DSLPM + E_ROAD + E_AIRPRT,
-  data = data.west
+  data = data
 )
 
 tbl_regression(mod) |>
@@ -78,7 +78,7 @@ Based on the results of this model, we find that there is not a statistically si
 
 
 ```{r figure}
-asthma.county <- data_west %>%
+asthma.county <- data %>%
   group_by(COUNTY) %>%
   mutate(count.asthma = mean(F_HVM))
 

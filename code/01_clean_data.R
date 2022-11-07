@@ -48,7 +48,7 @@ county_avg <- data_west %>%
             mean_diab = mean(EP_DIABETES, na.rm = T))
 
 # Obtaining spatial data
-#tidycensus::census_api_key('census_api_key_here', overwrite = TRUE, install = TRUE)
+# tidycensus::census_api_key('census_api_key_here', overwrite = TRUE, install = TRUE)
 options(tigris_use_cache = T)
 
 # Download the geometry/shapes for all US counties
@@ -56,12 +56,27 @@ us <- counties(cb = TRUE, resolution = '5m',
                class = 'sf',                  # data in sf format
                year = 2020)
 
+# Subsetting to only texas
+texas <- us %>%
+  filter(STATEFP == '48') %>%
+  select(GEOID, STATEFP, COUNTYFP, NAME) %>%
+  mutate(COUNTYFP, COUNTYFP = as.numeric(COUNTYFP))
 
+# Merging county_avg data with us data to obtain spatial variables for mapping
+county_avg_geo <- texas %>%
+  right_join(county_avg, by = c("COUNTYFP" = "countyfp"))
 
 saveRDS(
   county_avg_geo,
-  file = here::here("derived_data", county_avg_geo)
+  file = here::here("derived_data", "county_avg_geo.rds")
 )
+
+saveRDS(
+  texas,
+  file = here::here("derived_data", "texas.rds")
+)
+
+
 
 
 
