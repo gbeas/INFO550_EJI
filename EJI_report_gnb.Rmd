@@ -96,6 +96,16 @@ Figure 1: Average Health scores by county
 
 Health scores were averaged across census tracts within each county and were then plotted above. It is important to note that higher average scores indicate a greater number census tracts within counties that are flagged for high percentile risk of chronic diseases.
 
+## Figure 2
+
+```{r figure 2}
+
+map_path <- here::here("output/map_panel.png")
+
+```
+
+![](`r map_path`)
+
 # Additional notes on the draft
 
 I am confident in neither the analyses nor subsequent interpretations of results in this draft. I utilized this assignment and time more to begin to familiarize myself with the dataset and will be editing analyses in future iterations.
