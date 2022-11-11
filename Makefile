@@ -13,3 +13,7 @@ derived_data/county_avg_geo: code/01_clean_data.R raw_data/DataRecords.csv
 .PHONY: clean
 clean:
 	rm -f *.html derived_data/*.rds output/*.png
+	
+.PHONY: install
+install:
+	Rscript -e 'renv::restore()'
