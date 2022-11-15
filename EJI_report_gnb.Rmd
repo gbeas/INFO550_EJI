@@ -48,7 +48,7 @@ Exposure:
 ```{r, load-data}
 here::i_am("EJI_report_gnb.Rmd")
 data <- readRDS(
-  file = here::here("derived_data/data_west.rds")
+  file = here::here("derived_data/data_west_aspatial.rds")
 )
 ```
 

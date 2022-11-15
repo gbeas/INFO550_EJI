@@ -7,7 +7,7 @@ county_avg <- readRDS(
 )
 
 texas <- readRDS(
-  file = here::here("derived_data", "texas.rds")
+  file = here::here("derived_data", "texas_geo.rds")
 )
 
 # Estimated population; for reference

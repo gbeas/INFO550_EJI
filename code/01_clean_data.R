@@ -5,34 +5,14 @@ library(tidycensus)
 library(tigris)
 library(sf)
 
-# Saving absolute file path to data
-absolute_path <- here::here("raw_data/DataRecords.csv")
+absolute_path_west <- here::here("derived_data/data_west_aspatial.rds")
 
-# Loading raw data
-raw_data <- read.csv(absolute_path, header = T)
-
-####################
-
-# Subset to include only West Texas counties and just the variables of interest
-data_west <- raw_data %>%
-  filter(COUNTY %in%   c("Andrews", "Crockett", "Mason", "Reagan", "Terrell", "Borden", "Dawson", 
-                         "Irion", "McCulloch", "Reeves", "Tom Green", "Coke", "Ector", "Kimble", 
-                         "Menard", "Schleicher", "Upton", "Concho", "Gaines", "Loving", "Midland",
-                         "Sterling", "Ward", "Crane", "Glasscock", "Martin", "Pecos", "Sutton", "Winkler")) %>%
-  select(COUNTY, OBJECTID, statefp, countyfp, tractce, affgeoid, geoid, 
-         name, StateAbbr, StateDesc, Location, E_DAYPOP, E_TOTPOP, EP_POV200, EP_BPHIGH, EP_ASTHMA, EP_CANCER, EP_MHLTH, EP_DIABETES,
-         F_ASTHMA, E_OZONE, E_PM, E_DSLPM, E_PARK, E_ROAD, E_AIRPRT, F_HVM, E_NPL, E_TRI, EP_MINRTY)
-
-# Save cleaned dataset in data folder as data.west
-saveRDS(
-  data_west,
-  file = here::here("derived_data", "data_west.rds")
-)
+data_west_aspatial <- readRDS(absolute_path_west)
 
 ####################
 
 # Aggregating estimated proportions per census tract to county level
-county_avg <- data_west %>% 
+county_avg <- data_west_aspatial %>% 
   group_by(countyfp) %>%
   mutate(E_TOTPOP = as.numeric(gsub(",", "", E_TOTPOP))) %>%
   summarise(mean_pop = mean(E_TOTPOP, na.rm = T),
@@ -57,13 +37,13 @@ us <- counties(cb = TRUE, resolution = '5m',
                year = 2020)
 
 # Subsetting to only texas
-texas <- us %>%
+texas_geo <- us %>%
   filter(STATEFP == '48') %>%
   select(GEOID, STATEFP, COUNTYFP, NAME) %>%
   mutate(COUNTYFP, COUNTYFP = as.numeric(COUNTYFP))
 
 # Merging county_avg data with us data to obtain spatial variables for mapping
-county_avg_geo <- texas %>%
+county_avg_geo <- texas_geo %>%
   right_join(county_avg, by = c("COUNTYFP" = "countyfp"))
 
 saveRDS(
@@ -72,8 +52,8 @@ saveRDS(
 )
 
 saveRDS(
-  texas,
-  file = here::here("derived_data", "texas.rds")
+  texas_geo,
+  file = here::here("derived_data", "texas_geo.rds")
 )
 
 

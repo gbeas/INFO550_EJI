@@ -1,7 +1,5 @@
 # Exploration of Environmental Justice Index variables in West Texas counties
 
-> DISCLAIMER: Contents of report are currently undergoing a major overhaul and are fully broken. There is nothing in the output/ folder because code for output is currently in development
-
 ------------------------------------------------------------------------
 
 ## Report description
@@ -14,9 +12,16 @@ Results of this descriptive analysis presented in the report include Table 1 sum
 
 ------------------------------------------------------------------------
 
-## Generating the report
+## Relevant Make rules
+
+### Generating the report
 
 To generate the final report, set working directory to `EJI_project` directory. Run `Make report.html` or simply `make` in the terminal, and the html file, titled `EJI_report_gnb`, should appear in the project directory.
+
+### Resotring the package environment
+
+To restore packages necessary to prodcue the final report, make sure working directory is set to `EJI_project`. Run `make install` in the terminal.
+
 
 ------------------------------------------------------------------------
 
@@ -52,8 +57,10 @@ To generate the final report, set working directory to `EJI_project` directory. 
   - read in `table.rds`
   - import maps
   - includes interpretation of results
+  
+## A note on the data
 
-
+Data obtained from EJI is included in `raw_data/`. However, spatial data for mapping was obtained through the U.S. census and this requires a unique Census API key to download locally. For the purpose of this project, cleaned data with geography has been saved in `derived_data/` and included in the GitHub repository.
 
 
 
