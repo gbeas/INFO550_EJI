@@ -11,11 +11,6 @@ output:
 
 ```{r setup, include=FALSE}
 
-pacman::p_load(here, 
-               gtsummary,
-               ggplot2,
-               dplyr)
-
 knitr::opts_chunk$set(
   echo = F, warning = F, message = F
   )
@@ -27,21 +22,29 @@ knitr::opts_chunk$set(
 
 The Environmental Justice Index pulls information from the U.S. Census Bureau, EPA, CDC, and Mine Safety and Health Administration to create measures of factors associated with environmental health and ranks census tracts on cumulative environmental health justice measures. The cumulative rankings take into account social vulnerabilities, environmental burden, and health vulnerabilities. Social vulnerabilities include elements socioeconomic status, racial/ethnic minority status, household characteristics, and housing type. Environmental burden, which we will be focusing on in this report, include measures of air pollution, potentially hazardous and toxic sites, built environment, and water pollution. The health vulnerabilities focus primarily on pre-existing chronic burden of disease.
 
-In our analysis, we will be focusing specifically on the association between annual mean days above ozone regulatory standard and cumulative health scores within census tracts as well as the aggregated average of health scores at the county level.
+This analysis will conduct a linear regression to explore the association between average annual days above PM2.5 regulatory standards and the average health score of the county. The geographic distribution of average health scores will also be examined cartographically.
 
 Because of the massive scope of this dataset, we have subset the geographic location to include only the census tracts that make up the counties of West Texas.
 
-Variables of interest in our analysis are as follows:
+Variables of interest are defined as follows
 
-Outcome: 
-  **F_HVM**: this variable is the sum of 5 binary health outcomes variables that designate a census tract as flagged (var = 1) if the tract is ranked above 0.6666 percentile in risk with the following: high blood pressure, asthma, cancer, mental health, and diabetes. 
+Outcomes:
+
+  - **F_HVM**: Sum of 5 binary health outcomes variables that designate a census tract as flagged (var = 1) if the tract is ranked above 0.6666 percentile in risk for the following: high blood pressure, asthma, cancer, mental health, and diabetes.
 
 Exposure:
-**E_OZONE**: this variable is the annual average days above ozone regulatory standards.
+
+  - **E_PM**: Annual average days above PM2.5 regulatory standards.
+  
+Confounders:
+
+  - **EP_POV200**: Percentage below 200% poverty
+  - **EP_MINTRY**: Percentage of minoritized persons
+
 
 ## Objectives
 
-1. To explore the association between ozone days above the regulatory standard and a census tract's percentile flagging designation
+1. To explore the association between average annual days over PM2.5 regulatory standards and health outcomes in West Texas
 2. To visualize the aggregated mean health risk scores at the county level
 
 
@@ -55,57 +58,32 @@ data <- readRDS(
 
 # Analysis
 
-For the purpose of analyzing our data, we fit a regression model as shown below. We included annual average days above PM2.5 regulatory standards, ambient concentration of diesel PM/m3, proportion of tract's area within a 1 mile buffer of high volume roads, and proportion of tract's area within a 1 mile buffer of an airport as potential confounders.
-
-## Table 1
-
-```{r regression}
-
-mod <- glm(
-  F_HVM ~ E_OZONE + E_PM + E_DSLPM + E_ROAD + E_AIRPRT,
-  data = data
-)
-
-tbl_regression(mod) |>
-  add_global_p()
-
-```
-Table 1: Regression model results, including variables of interest, parameter estimates, 95% confidence intervals, and p-values.
-
-Based on the results of this model, we find that there is not a statistically significant association between health scores and annual average days O3 above regulatory standards when annual average days above PM2.5 regulatory standards, ambient concentration of diesel PM/m3, proportion of tract's area within a 1 mile buffer of high volume roads, and proportion of tract's area within a 1 mile buffer of an airport are controlled for. There does however seem to be a statistically significant relationship between health scores and ambient concentration of diesel when controlling for the other variables included in our model.
-
-## Figure 1
-
+## Descriptive Figures
 
 ```{r figure}
-asthma.county <- data %>%
-  group_by(COUNTY) %>%
-  mutate(count.asthma = mean(F_HVM))
 
-asthma.county <- asthma.county[!duplicated(asthma.county$COUNTY), ]
-  
-  
-figure1<- ggplot(data=asthma.county, aes(x=COUNTY, y=count.asthma)) +
-  geom_bar(stat="identity") +
-  labs(title = "Average Health Score by County", y = "Average Health Score")
-figure1 + theme_bw() + theme(axis.text.x = element_text(angle = 80, vjust = 0.5))
+figure1 <- readRDS(file = here::here("output/figure1.rds"))
+figure1
 
 ```
 
-Figure 1: Average Health scores by county
-
-Health scores were averaged across census tracts within each county and were then plotted above. It is important to note that higher average scores indicate a greater number census tracts within counties that are flagged for high percentile risk of chronic diseases.
-
-## Figure 2
+As we can see, the highest mean health score reported was a 3, reported by Coke, Irion, Kimble, Mason, McCulloch, Menard, and Terrell County. The next highest mean score was a 2 while the lowest mean score was 0.25.
 
 ```{r figure 2}
-
-map_path <- here::here("output/map_panel.png")
-
+map_path <- here::here("output/flags_inset.png")
 ```
 
 ![](`r map_path`)
 
-# Additional notes on the draft
+For context, the values in the bar plot have been mapped. We see that the counties with the highest mean score appear to predominantly fall in the southern part of the region. For context, those counties sit south of the I-20 corridor and are remote and generally sparsely populated. There are a number of factors in such a scenario that can result in greater prevalence of adverse health outcomes including lack of access to care and higher rates of poverty. This clustering to the south suggests there may be geographically important factors at play, though a much more robust analysis of this area would be needed to support that.
 
-I am confident in neither the analyses nor subsequent interpretations of results in this draft. I utilized this assignment and time more to begin to familiarize myself with the dataset and will be editing analyses in future iterations.
+## Regression table
+
+```{r regression}
+
+reg_table <- readRDS(here::here("output/reg_table.rds"))
+reg_table
+
+```
+
+In the linear model exploring the association between annual days above PM2.5 regulatory standards and health scores, there does not appear to be a significant association after controlling for the percentage of population below 200% poverty and the percentage of minoritized persons. As mentioned above, this region of Texas is incredibly rural and as such, there are a number of factors outside of environmental exposure that can contribute to above average prevalences of adverse health outcomes. More nuanced investigations of health and environmental exposure in the general population of this region is warranted.

@@ -21,7 +21,7 @@ data_west_aspatial <- raw_data %>%
                          "Sterling", "Ward", "Crane", "Glasscock", "Martin", "Pecos", "Sutton", "Winkler")) %>%
   select(COUNTY, OBJECTID, statefp, countyfp, tractce, affgeoid, geoid, 
          name, StateAbbr, StateDesc, Location, E_DAYPOP, E_TOTPOP, EP_POV200, EP_BPHIGH, EP_ASTHMA, EP_CANCER, EP_MHLTH, EP_DIABETES,
-         F_ASTHMA, E_OZONE, E_PM, E_DSLPM, E_PARK, E_ROAD, E_AIRPRT, F_HVM, E_NPL, E_TRI, EP_MINRTY)
+         F_ASTHMA, E_OZONE, E_PM, E_DSLPM, E_PARK, E_ROAD, E_AIRPRT, F_HVM, E_NPL, E_TRI, EP_MINRTY, E_IMPWTR)
 
 # Save cleaned dataset in data folder as data.west
 saveRDS(

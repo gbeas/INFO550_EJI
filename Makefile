@@ -1,4 +1,4 @@
-report.html: EJI_report_gnb.Rmd code/04_render_report.R derived_data/county_avg_geo derived_data/data_west_aspatial output/maps
+report.html: EJI_report_gnb.Rmd code/04_render_report.R derived_data/county_avg_geo derived_data/data_west_aspatial output/maps output/table1
 	Rscript code/04_render_report.R
 
 output/table1: code/02_make_table1.R derived_data/county_avg_geo
@@ -15,7 +15,7 @@ derived_data/data_west_aspatial: code/00_clean_data.R raw_data/DataRecords.csv
 	
 .PHONY: clean
 clean:
-	rm -f *.html derived_data/*aspatial.rds output/*.png
+	rm -f *.html derived_data/*aspatial.rds output/*.png *.pdf *.png output/*.rds
 	
 .PHONY: clean_all
 clean_all:

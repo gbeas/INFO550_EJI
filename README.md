@@ -27,14 +27,19 @@ To restore packages necessary to prodcue the final report, make sure working dir
 
 ## Code description
 
-`code/01_clean_data.R`
+`code/00_clean_data.R`
 
   - read in raw data from `raw_data/` folder
   - subset West Texas counties and variables of interest
+  - save West Texas data as `data_west_aspatial.rds` in `derived_data/` folder
+
+`code/01_clean_data.R`
+
+  - read West Texas subset from `derived_data/` folder
   - aggregate to county level
   - merge aggregate data with U.S. Census spatial data
-  - save West Texas data as `data_west.rds` in `derived_data/` folder
   - save county aggregate data with spatial data as `county_avg_geo.rds` in `derived_data/` folder
+  - save Texas county geo borders as `texas_geo.rds` in `derived_data/` folder
 
 `code/02_make_table1.R`
 
