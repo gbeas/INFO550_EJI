@@ -27,4 +27,4 @@ COPY renv/settings.dcf renv
 
 RUN Rscript -e "renv::restore(prompt = FALSE)"
 
-CMD make && mv EJI_project_gnb.html final_report
+CMD make && mv EJI_report_gnb.html final_report
