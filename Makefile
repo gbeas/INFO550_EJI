@@ -42,7 +42,7 @@ final_report/report_m1.html:
 	
 # run container Mac Intel
 final_report/report_mac.html:
-	docker run -v "$$(pwd)/final_report":/project/final_report
+	docker run -v "$$(pwd)/final_report":/project/final_report gbeas/eji_project
 
 	
 # run container Windows
