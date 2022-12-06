@@ -23,4 +23,29 @@ clean_all:
 	
 .PHONY: install
 install:
-	Rscript -e 'renv::restore()'
+	Rscript -e 'renv::restore(prompt = FALSE)'
+	
+# DOCKER
+
+project_files = EJI_report_gnb.Rmd code/00_clean_data.R code/01_clean_data.R code/02_make_table1.R code/03_figures.R code/ code/04_render_report.R Makefile
+
+renv_files = renv.lock renv/settings.dcf renv/activate.R
+
+# build image
+eji_project: $(project_files) $(renv_files)
+	docker build -t eji_project .
+	touch $@
+	
+# run container mac M1
+final_report/report_m1.html:
+	docker run --platform linux/amd64 -v "$$(pwd)/final_report":/project/final_report gbeas/eji_project
+	
+# run container Mac Intel
+final_report/report_mac.html:
+	docker run -v "$$(pwd)/final_report":/project/final_report
+
+	
+# run container Windows
+final_report/report_wind.html:
+	docker run -v "$$/(pwd)/final_report":/project/final_report gbeas/eji_project
+
