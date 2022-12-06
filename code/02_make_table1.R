@@ -9,8 +9,7 @@ county_avg <- readRDS(
 health_mod <- glm(mean_hlthFlag ~ mean_pm + mean_pov200 + mean_mintry, 
                   data = county_avg)
 
-reg_table <- tbl_regression(health_mod) |>
-  add_global_p()
+reg_table <- tbl_regression(health_mod)
 
 saveRDS(reg_table,
         file = here::here("output/reg_table.rds"))
